@@ -121,9 +121,11 @@ function main() {
                     let characterPoint2Y = characterY + characterHeight;
 
                     if((characterPoint1X > platformPoint1X && characterPoint1X < platformPoint2X && characterPoint1Y > platformPoint1Y && characterPoint1Y < platformPoint1Y + 8) || (characterPoint2X > platformPoint1X && characterPoint2X < platformPoint2X && characterPoint2Y > platformPoint2Y && characterPoint2Y < platformPoint2Y + 8)) {
+                        if(platforms[i].used === 0) {
+                            score++;
+                        }
                         platforms[i].used = 1;
                         jump = true;
-                        score++;
                     }
                 }
             }
