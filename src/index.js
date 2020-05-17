@@ -11,7 +11,7 @@ function main() {
             var characterHeight = 20;
             var characterWidth = 20;
             var characterX = (canvas.width - characterWidth) / 2; //starts character at the center of the width of the canvas
-            var characterY = (canvas.height - characterHeight) / 2;
+            var characterY = 0;
             var rightPressed = false;
             var leftPressed = false;
             let platforms = [];
@@ -87,7 +87,7 @@ function main() {
                 for(let i = 0; i < platforms.length; i++){
                     if(platforms[i]){
                         if(platforms[i].y > canvas.height) {
-                            platforms[i].y = 0;
+                            platforms[i].y = getRandomNum(-75, 0);
                             platforms[i].x = getRandomNum(0, canvas.width);
                             platforms[i].used = 0;
                         }
