@@ -17,9 +17,9 @@ function main() {
             let platforms = [];
             let jump = false;
             let jumped = 0;
-
+            let gravity = 6.2;
             let score = 0;
-
+            let yVelocity = 3;
             function draw (){
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             
@@ -30,13 +30,15 @@ function main() {
 
                 if(!jump) {
                     collisionDetection();
-                    characterY += 6.2;
-                } else if (jump && jumped < 200) {
-                    characterY -= 6;
-                    jumped += 6;
-                } else if (jumped >= 200){
+                    characterY += gravity
+                } else if (jump && yVelocity >= 0) {
+                    characterY -= 4 * yVelocity;
+                    yVelocity -= .1;
+                    // jumped += 2 + gravity;
+                } else if (yVelocity <= 0){
                     jump = false;
-                    jumped = 0;
+                    // jumped = 0;
+                    yVelocity = 3;
                 }
                 
                 if (characterY > canvas.height + characterHeight) {
