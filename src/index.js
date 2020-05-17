@@ -30,11 +30,11 @@ function main() {
 
                 if(!jump) {
                     collisionDetection();
-                    characterY += 3;
+                    characterY += 6.2;
                 } else if (jump && jumped < 200) {
-                    characterY -= 4;
-                    jumped += 7;
-                } else if (jump && jumped > 200){
+                    characterY -= 6;
+                    jumped += 6;
+                } else if (jumped >= 200){
                     jump = false;
                     jumped = 0;
                 }
