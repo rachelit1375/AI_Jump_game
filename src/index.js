@@ -17,7 +17,7 @@ function main() {
             let platforms = [];
             let jump = false;
             let jumped = 0;
-            let gravity = 6.2;
+            let gravity = 8;
             let score = 0;
             let yVelocity = 3;
             function draw (){
@@ -42,9 +42,9 @@ function main() {
                 }
                 
                 if (characterY > canvas.height + characterHeight) {
-                    // alert("GAME OVER");
-                    // document.location.reload();
-                    // clearInterval(interval);
+                    alert("GAME OVER");
+                    document.location.reload();
+                    clearInterval(interval);
 
                 }
                 if(rightPressed) {
@@ -75,7 +75,7 @@ function main() {
             }
 
             function randomPlatforms() {
-                let randomNum = getRandomNum(15, 20);
+                let randomNum = getRandomNum(10, 15);
                 for(let i = 0; i < randomNum; i++) {
                     let randomX = getRandomNum(0, canvas.width);
                     let randomY = getRandomNum(0, canvas.height);
@@ -86,13 +86,20 @@ function main() {
             function drawPlatforms() {
                 for(let i = 0; i < platforms.length; i++){
                     if(platforms[i]){
+                        if(platforms[i].y > canvas.height) {
+                            platforms[i].y = 0;
+                            platforms[i].x = getRandomNum(0, canvas.width);
+                            platforms[i].used = 0;
+                        }
                         if(platforms[i].used === 0) {
+                            platforms[i].y = platforms[i].y + 2;
                             ctx.beginPath();
                             ctx.rect(platforms[i].x, platforms[i].y, 40, 8);
                             ctx.fillStyle = "green";
                             ctx.fill();
                             ctx.closePath;
                         } else if (platforms[i].used === 1) {
+                            platforms[i].y = platforms[i].y + 2;
                             ctx.beginPath();
                             ctx.rect(platforms[i].x, platforms[i].y, 40, 8);
                             ctx.fillStyle = "red";
