@@ -24,21 +24,19 @@ export default class Game {
         this.characterJump();
 
         if (this.character.outOfRange()) {
-            alert("GAME OVER");
-            document.location.reload();
-            clearInterval(interval);
-
+            let playAgainButton = document.getElementById("play-again");
+            playAgainButton.classList.remove("removed");
+            cancelAnimationFrame(draw);
         }
         this.character.characterMove();
-        // characterY += 3; //gravity
         requestAnimationFrame(this.draw.bind(this));
     }
    
-    getRandomNum(start, end) { //game function
+    getRandomNum(start, end) { 
         return Math.floor(Math.random() * (end - start)) + start;
     }
 
-    randomPlatforms() { //game function
+    randomPlatforms() {
         let randomNum = this.getRandomNum(10, 15);
         for (let i = 0; i < randomNum; i++) {
             let randomX = this.getRandomNum(0, this.canvas.width);
@@ -47,7 +45,7 @@ export default class Game {
         }
     }
 
-    drawPlatforms() { //game function
+    drawPlatforms() { 
         for (let i = 0; i < this.platforms.length; i++) {
             if (this.platforms[i]) {
                 if (this.platforms[i].yCoord > this.canvas.height) {
@@ -75,10 +73,8 @@ export default class Game {
         } else if (this.character.jump && this.character.yVelocity >= 0) {
             this.character.characterY -= 4 * this.character.yVelocity;
             this.character.yVelocity -= .1;
-            // jumped += 2 + gravity;
         } else if (this.character.yVelocity <= 0) {
             this.character.jump = false;
-            // jumped = 0;
             this.character.yVelocity = 3;
         }
     }
@@ -112,9 +108,7 @@ export default class Game {
             }
         }
     }
-            // document.addEventListener("keydown", keyDownHandler, false);
-            // document.addEventListener("keyup", keyUpHandler, false);
-
+ 
             keyDownHandler(e) {
                 if(e.key == "Right" || e.key == "ArrowRight"){
                     this.character.rightPressed = true;
@@ -131,6 +125,4 @@ export default class Game {
             }
         }
 
-        // draw();
-        //  randomPlatforms();
 }

@@ -140,12 +140,25 @@ function main() {
 //                 }
 //             }
 
-        let game = new Game();
-        console.log(game.character);
-        window.addEventListener("keydown", game.keyDownHandler, false);
-       window.addEventListener("keyup", game.keyUpHandler, false);
-        game.draw();
-        game.randomPlatforms();
+    //     let game = new Game();
+    //     window.addEventListener("keydown", game.keyDownHandler, false);
+    //    window.addEventListener("keyup", game.keyUpHandler, false);
+    //     game.draw();
+    //     game.randomPlatforms();
+
+    let playButton = document.getElementById("play");
+    let playAgainButton = document.getElementById("play-again");
+    playAgainButton.classList.add("removed");
+
+    playButton.addEventListener("click", () => {
+        play();
+        playButton.classList.add("removed");
+    });
+
+    playAgainButton.addEventListener("click", () => {
+        play();
+        playAgainButton.classList.add("removed");
+    });
 
 //             function keyDownHandler(e) {
 //                 if(e.key == "Right" || e.key == "ArrowRight"){
@@ -165,4 +178,12 @@ function main() {
 
 //         draw();
 //          randomPlatforms();
+}
+
+function play() {
+    let game = new Game();
+    game.draw();
+    window.addEventListener("keydown", game.keyDownHandler, false);
+    window.addEventListener("keyup", game.keyUpHandler, false);
+    game.randomPlatforms();
 }

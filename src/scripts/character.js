@@ -38,7 +38,7 @@ export default class Character {
         if (this.rightPressed) {
             this.characterX += 6;
             if (this.characterX + this.characterWidth > this.canvas.width) {
-                characterX = 0;
+                this.characterX = 0;
             }
         } else if (this.leftPressed) {
             this.characterX -= 6;
