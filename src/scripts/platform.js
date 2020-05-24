@@ -8,30 +8,7 @@ export default class Platform {
     }
 
 
- 
-
-    drawPlatforms(ctx) { //game function
-        for (let i = 0; i < this.platforms.length; i++) {
-            if (this.platforms[i]) {
-                if (this.platforms[i].yCoord > this.canvas.height) {
-                    this.platforms[i].yCoord = getRandomNum(-75, 0);
-                    this.platforms[i].xCoord = getRandomNum(0, this.canvas.width);
-                    this.platforms[i].used = 0;
-                }
-                if (this.platforms[i].used === 0) {
-                    this.platforms[i].yCoord = this.platforms[i].yCoord + 2;
-
-                    platforms[i].drawUnusedPlatform(this.platforms[i].xCoord, this.platforms[i].yCoord);
-                } else if (this.platforms[i].used === 1) {
-                    this.platforms[i].yCoord = this.platforms[i].yCoord + 2;
-                  
-                    platforms[i].drawUsedPlatform(this.platforms[i].xCoord, this.platforms[i].yCoord);
-                }
-            }
-        }
-    }
-
-    drawUnusedPlatform(x, y, ctx){ //platform function
+    drawUnusedPlatform(x, y, ctx){
         ctx.beginPath();
         ctx.rect(x, y, 40, 8);
         ctx.fillStyle = "green";
@@ -39,7 +16,7 @@ export default class Platform {
         ctx.closePath;
     }
 
-    drawUsedPlatform(x, y, ctx){ //platform function
+    drawUsedPlatform(x, y, ctx){ 
         ctx.beginPath();
         ctx.rect(x, y, 40, 8);
         ctx.fillStyle = "red";

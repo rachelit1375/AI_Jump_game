@@ -13,14 +13,12 @@ export default class Game {
 
     }
 
-    draw() { //game function
+    draw() { 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.character.drawcharacter(this.ctx);
         this.drawPlatforms();
         this.drawScore();
-        // collisionDetection();
-
         this.characterJump();
 
         if (this.character.outOfRange()) {
@@ -37,7 +35,7 @@ export default class Game {
     }
 
     randomPlatforms() {
-        let randomNum = this.getRandomNum(10, 15);
+        let randomNum = this.getRandomNum(15, 20);
         for (let i = 0; i < randomNum; i++) {
             let randomX = this.getRandomNum(0, this.canvas.width);
             let randomY = this.getRandomNum(0, this.canvas.height);
@@ -109,20 +107,20 @@ export default class Game {
         }
     }
  
-            keyDownHandler(e) {
-                if(e.key == "Right" || e.key == "ArrowRight"){
-                    this.character.rightPressed = true;
-                } else if (e.key == "Left" || e.key == "ArrowLeft"){
-                    this.character.leftPressed = true;
-                }
-            }
-
-            keyUpHandler(e) {
-            if(e.key == "Right" || e.key == "ArrowRight"){
-                this.character.rightPressed = false;
-            } else if (e.key == "Left" || e.key == "ArrowLeft"){
-                this.character.leftPressed = false;
-            }
+    keyDownHandler(e) {
+        if(e.key == "Right" || e.key == "ArrowRight"){
+            this.character.rightPressed = true;
+        } else if (e.key == "Left" || e.key == "ArrowLeft"){
+            this.character.leftPressed = true;
         }
+    }
+
+    keyUpHandler(e) {
+        if(e.key == "Right" || e.key == "ArrowRight"){
+            this.character.rightPressed = false;
+        } else if (e.key == "Left" || e.key == "ArrowLeft"){
+            this.character.leftPressed = false;
+        }
+    }
 
 }
