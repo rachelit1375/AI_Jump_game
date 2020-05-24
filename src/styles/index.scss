@@ -1,5 +1,5 @@
 body {
-    background: #ffd9f5; 
+    background: #813f1e; 
     margin: 0;
     padding: 0;
 }
@@ -13,7 +13,11 @@ body {
 }
 
 #myCanvas {
-    background: white;
+    background: url('/src/images/planet.png');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center;
+    background-size: 450px 520px;
 }
 
 .removed {

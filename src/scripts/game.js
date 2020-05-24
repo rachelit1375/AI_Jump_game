@@ -10,7 +10,7 @@ export default class Game {
         this.score = 0;
         this.keyDownHandler = this.keyDownHandler.bind(this);
         this.keyUpHandler = this.keyUpHandler.bind(this);
-
+            
     }
 
     draw() { 
@@ -21,13 +21,13 @@ export default class Game {
         this.drawScore();
         this.characterJump();
 
+        this.character.characterMove();
+       let anim = requestAnimationFrame(this.draw.bind(this));
         if (this.character.outOfRange()) {
             let playAgainButton = document.getElementById("play-again");
             playAgainButton.classList.remove("removed");
-            cancelAnimationFrame(draw);
+            cancelAnimationFrame(anim);
         }
-        this.character.characterMove();
-        requestAnimationFrame(this.draw.bind(this));
     }
    
     getRandomNum(start, end) { 
@@ -69,7 +69,7 @@ export default class Game {
             this.collisionDetection();
             this.character.characterY += this.character.gravity
         } else if (this.character.jump && this.character.yVelocity >= 0) {
-            this.character.characterY -= 4 * this.character.yVelocity;
+            this.character.characterY -= 3 * this.character.yVelocity;
             this.character.yVelocity -= .1;
         } else if (this.character.yVelocity <= 0) {
             this.character.jump = false;
@@ -80,7 +80,7 @@ export default class Game {
 
     drawScore(){
         this.ctx.font = "16px Arial";
-        this.ctx.fillStyle = "black";
+        this.ctx.fillStyle = "white";
         this.ctx.fillText("Score: " + this.score, 8, 20);
     }
 

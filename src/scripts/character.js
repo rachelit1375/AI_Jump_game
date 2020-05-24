@@ -2,16 +2,17 @@ export default class Character {
 
     constructor(canvas) {
         this.canvas = canvas;
-        this.characterHeight = 20;
-        this.characterWidth = 20;
-        this.characterWidth = 20;
+        this.characterHeight = 45;
+        this.characterWidth = 30;
         this.characterX = (canvas.width - this.characterWidth) / 2;  //starts character at the center of the width of the canvas
         this.characterY = 0; //starts character at the top of the screen
         this.rightPressed = false;
         this.leftPressed = false;
         this.jump = false;
-        this.gravity = 8;
+        this.gravity = 9;
         this.yVelocity = 3;
+        this.image = new Image();
+        this.image.src = "src/images/p1_front.png";
     }
 
     characterMove() {
@@ -32,11 +33,12 @@ export default class Character {
         return this.characterY > this.canvas.height + this.characterHeight;
     }
     drawcharacter(ctx) {
-        ctx.beginPath();
-        ctx.rect(this.characterX, this.characterY, this.characterWidth, this.characterHeight);
-        ctx.fillStyle = "#0095DD";
-        ctx.fill();
-        ctx.closePath;
+        // ctx.beginPath();
+        // ctx.drawImage(this.characterX, this.characterY, this.characterWidth, this.characterHeight);
+        // ctx.fillStyle = "#0095DD";
+        // ctx.fill();
+        // ctx.closePath;
+        ctx.drawImage(this.image, this.characterX, this.characterY, this.characterWidth, this.characterHeight);
     }
 
 
