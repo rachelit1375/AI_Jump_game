@@ -81,7 +81,7 @@ export default class Game {
 
 
     drawScore(){
-        this.ctx.font = "16px Arial";
+        this.ctx.font = "16px Chelsea Market";
         this.ctx.fillStyle = "white";
         this.ctx.fillText("Score: " + this.score, 8, 20);
     }
