@@ -7,16 +7,22 @@ function main() {
 
     let playButton = document.getElementById("play");
     let playAgainButton = document.getElementById("play-again");
+    let playButtonContainer = document.getElementById("play-container");
+    let playAgainButtonContainer = document.getElementById("play-again-container");
     playAgainButton.classList.add("removed");
+    playAgainButtonContainer.classList.add("removed");
+
 
     playButton.addEventListener("click", () => {
         play();
         playButton.classList.add("removed");
+        playButtonContainer.classList.add("removed");
     });
 
     playAgainButton.addEventListener("click", () => {
         play();
         playAgainButton.classList.add("removed");
+        playAgainButtonContainer.classList.add("removed");
     });
 
 

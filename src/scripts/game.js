@@ -25,7 +25,9 @@ export default class Game {
        let anim = requestAnimationFrame(this.draw.bind(this));
         if (this.character.outOfRange()) {
             let playAgainButton = document.getElementById("play-again");
+            let playAgainButtonContainer = document.getElementById("play-again-container");
             playAgainButton.classList.remove("removed");
+            playAgainButtonContainer.classList.remove("removed");
             cancelAnimationFrame(anim);
         }
     }

@@ -18,8 +18,19 @@ body {
     background-attachment: fixed;
     background-position: center;
     background-size: 450px 520px;
+    z-index: 1;
 }
 
 .removed {
     display: none;
+}
+
+.play-button-container,
+.play-again-button-container {
+    background: black;
+    width: 450px;
+    height: 520px;
+    z-index: 2;
+    margin: auto;
+    position: fixed;
 }
