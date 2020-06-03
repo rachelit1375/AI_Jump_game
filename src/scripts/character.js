@@ -12,7 +12,7 @@ export default class Character {
         this.gravity = 9;
         this.yVelocity = 3;
         this.image = new Image();
-        this.image.src = "src/images/p1_front.png";
+        this.image.src = "dist/images/p1_front.png";
     }
 
     characterMove() {

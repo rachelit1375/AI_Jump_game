@@ -6,7 +6,7 @@ export default class Platform {
         this.platformHeight = 25;
         this.used = 0;
         this.image = new Image();
-        this.image.src = 'src/images/brown platform merged transparent.png';
+        this.image.src = 'dist/images/brown platform merged transparent.png';
     }
 
 
