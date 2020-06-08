@@ -24,12 +24,23 @@ h2 {
 }
 
 #myCanvas {
-    background: url('/planet.png');
+    background: rgba(0, 0, 0, 0);
+    z-index: 2;
+}
+
+.background-image {
+    z-index: 1;
+    margin: auto;
+    position: fixed;
+}
+
+.background-image img {
+    width: 450px;
+    height: 520px;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center;
     background-size: 450px 520px;
-    z-index: 1;
 }
 
 .removed {
@@ -41,7 +52,7 @@ h2 {
     background: #20331c;
     width: 450px;
     height: 520px;
-    z-index: 2;
+    z-index: 3;
     margin: auto;
     position: fixed;
 }
@@ -71,4 +82,38 @@ h2 {
       background: #ec8e38;
       border: 3px solid #eba96e;
       transition: .2s;
+}
+
+.social-links {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-portfolio-links {
+    list-style-type: none;
+}
+
+.navbar-portfolio-links li {
+    margin: 20px 0;
+    background: #cb7527;
+    border: 3px solid #ec8e38;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.navbar-portfolio-links a {
+    text-decoration: none;
+    color: #1c1d1c;
+    display: block;
+    padding: 10px;
+}
+
+.navbar-portfolio-links li:hover {
+    background: #ec8e38;
+    border: 3px solid #eba96e;
 }
