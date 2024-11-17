@@ -2,7 +2,7 @@ import Platform from './platform';
 import Character from './character';
 export default class Game {
 
-    constructor(){
+    constructor() {
         this.canvas = document.getElementById("myCanvas");
         this.ctx = this.canvas.getContext("2d");
         this.platforms = [];
@@ -10,10 +10,10 @@ export default class Game {
         this.score = 0;
         this.keyDownHandler = this.keyDownHandler.bind(this);
         this.keyUpHandler = this.keyUpHandler.bind(this);
-            
+
     }
 
-    draw() { 
+    draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.character.drawcharacter(this.ctx);
@@ -22,7 +22,7 @@ export default class Game {
         this.characterJump();
 
         this.character.characterMove();
-       let anim = requestAnimationFrame(this.draw.bind(this));
+        let anim = requestAnimationFrame(this.draw.bind(this));
         if (this.character.outOfRange()) {
             let playAgainButton = document.getElementById("play-again");
             let playAgainButtonContainer = document.getElementById("play-again-container");
@@ -31,8 +31,8 @@ export default class Game {
             cancelAnimationFrame(anim);
         }
     }
-   
-    getRandomNum(start, end) { 
+
+    getRandomNum(start, end) {
         return Math.floor(Math.random() * (end - start)) + start;
     }
 
@@ -45,7 +45,7 @@ export default class Game {
         }
     }
 
-    drawPlatforms() { 
+    drawPlatforms() {
         for (let i = 0; i < this.platforms.length; i++) {
             if (this.platforms[i]) {
                 if (this.platforms[i].yCoord > this.canvas.height) {
@@ -53,15 +53,8 @@ export default class Game {
                     this.platforms[i].xCoord = this.getRandomNum(0, this.canvas.width);
                     this.platforms[i].used = 0;
                 }
-                if (this.platforms[i].used === 0) {
-                    this.platforms[i].yCoord = this.platforms[i].yCoord + 2;
-
-                    this.platforms[i].drawUnusedPlatform(this.platforms[i].xCoord, this.platforms[i].yCoord, this.ctx);
-                } else if (this.platforms[i].used === 1) {
-                    this.platforms[i].yCoord = this.platforms[i].yCoord + 2;
-
-                    this.platforms[i].drawUsedPlatform(this.platforms[i].xCoord, this.platforms[i].yCoord, this.ctx);
-                }
+                this.platforms[i].yCoord = this.platforms[i].yCoord + 2;
+                this.platforms[i].drawUsedPlatform(this.platforms[i].xCoord, this.platforms[i].yCoord, this.ctx);
             }
         }
     }
@@ -80,7 +73,7 @@ export default class Game {
     }
 
 
-    drawScore(){
+    drawScore() {
         this.ctx.font = "16px Chelsea Market";
         this.ctx.fillStyle = "white";
         this.ctx.fillText("Score: " + this.score, 8, 20);
@@ -108,19 +101,19 @@ export default class Game {
             }
         }
     }
- 
+
     keyDownHandler(e) {
-        if(e.key == "Right" || e.key == "ArrowRight"){
+        if (e.key == "Right" || e.key == "ArrowRight") {
             this.character.rightPressed = true;
-        } else if (e.key == "Left" || e.key == "ArrowLeft"){
+        } else if (e.key == "Left" || e.key == "ArrowLeft") {
             this.character.leftPressed = true;
         }
     }
 
     keyUpHandler(e) {
-        if(e.key == "Right" || e.key == "ArrowRight"){
+        if (e.key == "Right" || e.key == "ArrowRight") {
             this.character.rightPressed = false;
-        } else if (e.key == "Left" || e.key == "ArrowLeft"){
+        } else if (e.key == "Left" || e.key == "ArrowLeft") {
             this.character.leftPressed = false;
         }
     }

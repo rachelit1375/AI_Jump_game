@@ -24,8 +24,6 @@ function main() {
         playAgainButton.classList.add("removed");
         playAgainButtonContainer.classList.add("removed");
     });
-
-
 }
 
 function play() {

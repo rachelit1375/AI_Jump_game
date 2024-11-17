@@ -9,17 +9,6 @@ export default class Platform {
         this.image.src = 'src/images/brown platform merged transparent.png';
     }
 
-
-    drawUnusedPlatform(x, y, ctx){
-        // ctx.beginPath();
-        // ctx.rect(x, y, this.platformWidth, this.platformHeight);
-        // ctx.fillStyle = "green";
-        // ctx.fill();
-        // ctx.closePath;
-        ctx.drawImage(this.image, x, y, this.platformWidth, this.platformHeight);
-
-    }
-
     drawUsedPlatform(x, y, ctx){ 
         // ctx.beginPath();
         // ctx.rect(x, y, this.platformWidth, this.platformHeight);
