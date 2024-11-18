@@ -17,10 +17,10 @@ export default class Character {
 
     characterMove() {
         if (this.rightPressed) {
-            this.characterX += 6;
-            if (this.characterX + this.characterWidth > this.canvas.width) {
-                this.characterX = 0;
-            }
+            this.characterX =(this.characterX+ 6)%this.canvas.width;
+            // if (this.characterX + this.characterWidth > this.canvas.width) {
+            //     this.characterX = 0;
+            // }
         } else if (this.leftPressed) {
             this.characterX -= 6;
             if (this.characterX + this.characterWidth < 0) {
