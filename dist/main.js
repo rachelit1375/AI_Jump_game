@@ -366,48 +366,52 @@ else {
             //     recognition.start();
             // }
             function setupVoiceRecognition(character) {
-                let movementTimeout; // טיימאוט לביטול תנועה
-                recognition.lang = ''; // זיהוי עברית
+                // const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                // if (!SpeechRecognition) {
+                //     console.error("דפדפן זה אינו תומך בזיהוי דיבור.");
+                //     return;
+                // }
+
+                // const recognition = new SpeechRecognition();
+                recognition.lang = 'he-IL'; // זיהוי עברית
                 recognition.continuous = true; // זיהוי מתמשך
-                recognition.interimResults = false; // זיהוי זמני מבוטל - רק תוצאות סופיות
-            
+                recognition.interimResults = true; // זיהוי זמני
+
                 recognition.onresult = (event) => {
-                    const command = event.results[event.results.length - 1][0].transcript.trim(); // פקודה אחרונה
-                    console.log(`הפקודה שזוהתה: ${command}`); // הדפסה של הפקודה
-            
-                    // ביטול טיימאוט קודם (אם היה)
-                    if (movementTimeout) {
-                        clearTimeout(movementTimeout);
-                    }
-            
-                    // עצירת כל תנועה קודמת
-                    character.rightPressed = false;
-                    character.leftPressed = false;
-            
-                    // ביצוע פעולה לפי הפקודה
-                    if (command === "ימינה") {
-                        character.rightPressed = true;
-                        console.log("זז ימינה");
-                    } else if (command === "שמאלה") {
-                        character.leftPressed = true;
-                        console.log("זז שמאלה");
-                    }
-            
-                    // עצירה אוטומטית אחרי זמן קצוב
-                    movementTimeout = setTimeout(() => {
-                        character.rightPressed = false;
-                        character.leftPressed = false;
-                        console.log("עצירה אוטומטית");
-                    }, 300); // תנועה למשך 700ms בלבד
+                    let movementTimeout;
+                    const command = event.results[event.results.length - 1][0].transcript.trim();
+                    if (command.length < 3) return;
+                    const commands = command.split(/\s+/); // פיצול לפי רווחים
+                    console.log(`${commands}`);
+
+                    commands.forEach((cmd) => {
+                        if (cmd === "ימינה") {
+                            character.rightPressed = true;
+                            character.leftPressed = false;
+                            // console.log("זז ימינה");
+                        } else if (cmd === "שמאלה") {
+                            character.leftPressed = true;
+                            character.rightPressed = false;
+                            // console.log("זז שמאלה");
+                        }
+                        movementTimeout = setTimeout(() => {
+                            character.rightPressed = false;
+                            character.leftPressed = false;
+                            // console.log("עצירה אוטומטית");
+                        }, 500);
+
+                    });
                 };
-            
+
+
                 recognition.onerror = (event) => {
                     console.error("שגיאה בזיהוי דיבור:", event.error);
                 };
-            
+
                 recognition.start();
             }
-            
+
+
             function o() {
                 var game = new h();
                 game.draw();
