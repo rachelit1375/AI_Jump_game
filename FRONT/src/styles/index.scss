@@ -64,7 +64,7 @@ h2 {
 }
 
 #play,
-#play-again {
+#play-again,#analyze-pressure {
     background: #cb7527;
     padding: 10px 25px;
     border-radius: 3px;
@@ -78,7 +78,7 @@ h2 {
 }
 
 #play:hover,
-#play-again:hover {
+#play-again:hover ,#analyze-pressure:hover{
       background: #ec8e38;
       border: 3px solid #eba96e;
       transition: .2s;

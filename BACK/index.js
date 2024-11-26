@@ -6,8 +6,9 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const app = express();
 const port = 3000;
 app.use(cors());
+app.use(express.json());
 async function TranslationClassificationWord(word) {
-    console.log(word);
+    console.log("k" + word + "h");
     const genAI = new GoogleGenerativeAI(process.env.API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -17,6 +18,7 @@ async function TranslationClassificationWord(word) {
     - If its meaning is "LEFT", return 2.
     - Otherwise, return 3.
     answer me only in one digit!
+    Note: The word might originate from a different language but be written in Hebrew letters. Analyze the word carefully to determine its meaning.
     `;
 
     try {
@@ -45,102 +47,55 @@ app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
+async function sendToGeminiForStressLevel(loudness, speechRate, pitch) {
+    const genAI = new GoogleGenerativeAI(process.env.API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    const prompt = `
+    Given the following audio data, evaluate the stress level from 1 to 10, where 1 is least stressed and 10 is most stressed.
+
+    The user is playing a jumping game where they need to avoid falling off moving platforms. This game may induce emotional reactions but the player is expected to stay relatively calm.
+
+    ### Audio Data:
+       loudness: ${loudness}, speech Rate : ${speechRate}, pitch:${pitch} 
+    ### Key Stress Indicators:
+    - **Loudness**: 
+        - Below 5: Calm 
+        - 5-8: Mild Stress 
+        - Above 8: Higher Stress or Panic 
+    - **Pitch**: 
+        - Below 50: Calm
+        - 50-80: Moderate Anxiety 
+        - Above 80: Panic or High Stress 
+    - **Speech Rate**: 
+        - Below 20: Calm
+        - 20-40: Moderate Anxiety 
+        - Above 40: Panic or High Stress
+
+    Answer with a single number from 1 to 10 (no explanations), where 1 is calm and 10 is highly stressed.
+`;
+
+    try {
+        const result = await model.generateContent(prompt);
+        return result.response.text(); // מחזיר את התוצאה שנשקלת כטקסט
+    } catch (error) {
+        console.error('Error generating response:', error);
+        return 'Error'; // במקרה של שגיאה, מחזיר "Error"
+    }
 
 
-//=============================
-//In this part we envolve analyzing data from the jobs and from the CV files to predict the latest required skills
-//save data page
-// import mongoose from 'mongoose';
-// import { GeminiClient } from '@google-cloud/gemini';
-// import dotenv from 'dotenv';
+}
 
-// dotenv.config();
+app.post("/storeScoreAndStress", async (req, res) => {
+    const { loudness, speechRate, pitch, score } = req.body;
 
-// const mongoAtlasUri = 'mongodb+srv://naamashvalb:leHnICQc9v91p649@cluster0.zoxge.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
-
-// mongoose.connect(mongoAtlasUri, {
-//     useNewUrlParser: true,
-//     useUnifiedTopology: true
-// }).then(() => {
-//     console.log("Connected to MongoDB Atlas!");
-// }).catch(err => {
-//     console.error("Error connecting to MongoDB Atlas:", err);
-// });
-
-// const jobSchema = new mongoose.Schema({
-//     keywords: [String]
-// });
-
-// const candidateSchema = new mongoose.Schema({
-//     skills: [String]
-// });
-
-// const Job = mongoose.model('Job', jobSchema);
-// const Candidate = mongoose.model('Candidate', candidateSchema);
-
-// export async function saveJob(keywords) {
-//     const job = new Job({ keywords });
-//     await job.save();
-// }
-
-// export async function saveCandidate(skills) {
-//     const candidate = new Candidate({ skills });
-//     await candidate.save();
-// }
-
-// export async function analyzeSupplyAndDemand() {
-//     const jobs = await Job.find();
-//     const candidates = await Candidate.find();
-
-//     const requiredSkills = new Map();
-//     const existingSkills = new Map();
-
-//     jobs.forEach(job => {
-//         job.keywords.forEach(skill => {
-//             requiredSkills.set(skill, (requiredSkills.get(skill) || 0) + 1);
-//         });
-//     });
-
-//     candidates.forEach(candidate => {
-//         candidate.skills.forEach(skill => {
-//             existingSkills.set(skill, (existingSkills.get(skill) || 0) + 1);
-//         });
-//     });
-
-//     const gapAnalysis = [];
-//     requiredSkills.forEach((count, skill) => {
-//         const supply = existingSkills.get(skill) || 0;
-//         if (count > supply) {
-//             gapAnalysis.push({ skill, demand: count, supply });
-//         }
-//     });
-
-//     const recommendations = await generateRecommendations(gapAnalysis);
-//     return recommendations;
-// }
-
-// const gemini = new GeminiClient({
-//     keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
-// });
-
-// export async function generateRecommendations(gapAnalysis) {
-//     const prompt = `Analyze the following skill gaps and suggest training courses:\n${JSON.stringify(gapAnalysis)}`;
-
-//     const request = {
-//         model: 'gemini-text-001',
-//         prompt: prompt,
-//         maxTokens: 100
-//     };
-
-//     try {
-//         const [response] = await gemini.generateText(request);
-//         return response.text.trim();
-//     } catch (error) {
-//         console.error("Error generating recommendations:", error);
-//         throw error;
-//     }
-// }
-
+    if (loudness == null || speechRate == null || pitch == null || score == null) {
+        return res.status(400).send('Missing required data');
+    }
+    const stressLevel = parseInt(await sendToGeminiForStressLevel(loudness, speechRate, pitch), 10);
+    console.log(stressLevel);
+    InsertToSchema(stressLevel, score);
+})
 const mongoose = require('mongoose');
 const mongoAtlasUri = process.env.MONGO_URI;
 mongoose.connect(mongoAtlasUri, {
@@ -155,21 +110,68 @@ const PressureSchema = new mongoose.Schema({
     pressureLevel: Number,
     score: Number
 });
+app.get('/AnalyzePressureAndPerformance', async (req, res) => {
+
+    // מבצע את קריאת ה-API ומקבל את התוצאה
+    const response = await analyzePressureAndScores(1);
+
+    // שולח את התוצאה חזרה כתגובה
+    res.send(response);
+});
+
+app.get('/PressureScoresChart', async (req, res) => {
+    try {
+        const pressureMap = await analyzePressureAndScores(2);
+        for (const [key, scores] of pressureMap) {//חישוב ממוצע
+            const average = scores.reduce((sum, val) => sum + val, 0) / scores.length;
+            pressureMap.set(key, average);
+        }
+        const sortedPressureData = Array.from(pressureMap.entries())
+            .sort((a, b) =>a[0]-  b[0]); // מיון לפי הממוצע (הערך)
+
+        const labels = sortedPressureData.map(entry => entry[0]); // שמות הצירים
+        const data = sortedPressureData.map(entry => entry[1]); // הנתונים הממוצעים
+
+
+        // מחזירים מבנה JSON ידידותי לפרונט
+        res.json({
+            labels, // הצירים
+            datasets: [
+                {
+                    label: 'Average Scores by Pressure Levels',
+                    data, // הנתונים הממוצעים
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                },
+            ],
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Internal server error');
+    }
+
+});
 const Pressure = mongoose.model('Pressure', PressureSchema);
 
 async function InsertToSchema(pressureLevel, score) {
+    console.log("score :" + score)
     const pressure = new Pressure({ pressureLevel, score });
     await pressure.save();
 }
 
-async function analyzePressureAndScores() {
+async function analyzePressureAndScores(id) {
     const pressures = await Pressure.find();
 
     const pressureMap = new Map();
     pressures.forEach(line => {
-        pressureMap.set(line.pressureLevel, [...pressureMap.get(pressureLevel) || [], line.score]);
+        pressureMap.set(line.pressureLevel, [...pressureMap.get(line.pressureLevel) || [], line.score]);
     });
-    generateAnalysis(pressureMap);
+    if (id === 1)
+        return generateAnalysis(pressureMap);
+    if (id === 2)
+        return pressureMap;
+
 }
 
 async function generateAnalysis(pressureMap) {
@@ -182,28 +184,33 @@ async function generateAnalysis(pressureMap) {
     const prompt = `
     I have the following data of pressure levels and scores:
     ${pressureData}
-
+    
     Please analyze the relationship between pressure levels and the scores.
     - Describe any noticeable trends you see.
     - Explain what you think about how pressure levels affect the scores, and provide any insights or conclusions you can draw.
     - For example, do people with lower pressure levels tend to have higher scores? Please explain in detail.
     
     Write a detailed analysis similar to an article in a newspaper.
+    Format the entire response in valid HTML tags only:
+    - Use at least one <h1> for the main title.
+    - Use <h2> or <h3> for section headings.
+    - Use <p> for paragraphs.
+    - Use <ul> or <ol> for any lists of insights or trends.
+    Ensure the HTML can be directly pasted into the <body> tag without needing a <head> section or additional formatting.
     `;
+
 
     try {
         const result = await model.generateContent(prompt);
-        return result.response.text(); // מחזיר את התוצאה שנשקלת כטקסט
+        console.log(result.response.text());
+        return result.response.text().replace(/```html/g, "").replace(/```/g, "");; // מחזיר את התוצאה שנשקלת כטקסט
     } catch (error) {
         console.error('Error generating response:', error);
         return 'Error generating response'; // במקרה של שגיאה
     }
 }
 
-
-
-
-
+//analyzePressureAndScores();
 
 
 

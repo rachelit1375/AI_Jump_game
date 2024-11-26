@@ -1,3 +1,4 @@
+import { startRecording, stopRecording } from './recordinition.js'
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (!SpeechRecognition) {
     console.error("דפדפן זה אינו תומך בזיהוי דיבור.");
@@ -110,7 +111,7 @@ else {
                     this.leftPressed = !1;
                     this.jump = !1;
                     this.gravity = 2;
-                    this.yVelocity = 3;
+                    this.yVelocity = 10;
                     this.image = new Image;
                     this.image.src = "src/images/p1_front.png";
                 }
@@ -210,6 +211,7 @@ else {
                                     recognition.stop();
                                     console.log("הזיהוי הקולי הופסק כי המשחק נגמר.");
                                 }
+                                stopRecording(this.score);
                                 cancelAnimationFrame(t);
 
                             }
@@ -323,7 +325,7 @@ else {
 
 
             function setupVoiceRecognition(character) {
-                recognition.lang = ''; // זיהוי עברית
+                recognition.lang = '';
                 recognition.continuous = true; // זיהוי מתמשך
                 recognition.interimResults = true; // זיהוי זמני
 
@@ -338,8 +340,10 @@ else {
                     // אם הפקודה שונה מהפקודה האחרונה (למנוע את חזרת הפקודה)
                     if (result !== lastCommand) {
                         lastCommand = result;  // עדכון הפקודה האחרונה
-                    if(result.length<3)
-                        return;
+                        if (result.length < 3)
+                            return;
+                        if (result.includes(" "))
+                            return;
                         // טיפול בפקודות
                         // if (result === "ימינה") {
                         //     character.rightPressed = true;
@@ -388,21 +392,24 @@ else {
                 recognition.start();
             }
 
+
             function o() {
                 var game = new h();
                 setupVoiceRecognition(game.character);
+                startRecording();
                 setTimeout(() => {
                     game.draw();
                     window.addEventListener("keydown", game.keyDownHandler, !1);
                     window.addEventListener("keyup", game.keyUpHandler, !1);
                     game.randomPlatforms();
-                }, 1000);
+                }, 3000);
             }
 
             window.addEventListener("DOMContentLoaded", function () {
                 var playBtn = document.getElementById("play"),
                     replayBtn = document.getElementById("play-again"),
                     playContainer = document.getElementById("play-container"),
+                    analyzePressureButton = document.getElementById('analyze-pressure'),
                     replayContainer = document.getElementById("play-again-container");
 
                 replayBtn.classList.add("removed");
@@ -419,6 +426,10 @@ else {
                     replayBtn.classList.add("removed");
                     replayContainer.classList.add("removed");
                 });
+                analyzePressureButton.addEventListener('click', function () {
+                    window.location.href = 'analizes.html'; // מעבר לדף analizes.html בלחיצה על הכפתור
+                });
+
             });
 
         }
