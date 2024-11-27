@@ -53,28 +53,36 @@ async function sendToGeminiForStressLevel(loudness, speechRate, pitch) {
 
     const prompt = `
     Given the following audio data, evaluate the stress level on a scale from 1 to 10, where 1 is least stressed and 10 is most stressed.
-    
+   
     The user is engaged in an interactive game requiring focus and quick reactions. Emotional responses are expected but should be within reasonable limits.
-    
+   
     ### Audio Data:
        loudness: ${loudness}, speech rate: ${speechRate}, pitch: ${pitch}
-    
+   
     ### Key Stress Indicators:
     - **Loudness (average)**:
-        - Below 2000: Very Calm (Rating: 1-3)
-        - 2000-5000: Mild Stress (Rating: 4-6)
-        - Above 5000: High Stress or Panic (Rating: 7-10)
-    - **Speech Rate (average)**:
-        - Below 0.01: Very Calm (Rating: 1-3)
-        - 0.01-0.05: Moderate Stress (Rating: 4-6)
-        - Above 0.05: High Stress (Rating: 7-10)
+        - Below 2000: Very Calm (Rating: 1-2)
+        - 2000-7000: Mild Stress (Rating: 3-5)
+        - 7000-10000: Moderate Stress (Rating: 6-7)
+        - Above 10000: High Stress or Panic (Rating: 8-9)
+        -Above 14000:very High Stress or Panic(10)
+    - **Speech Rate (average)** (Less significant in this analysis):
+        - Below 0.01: Very Calm (Rating: 1-2)
+        - 0.01-0.05: Calm to Moderate (Rating: 3-5)
+        - 0.05-0.1: Moderate Stress (Rating: 6-7)
+        - Above 0.1: High Stress (Rating: 8-10)
     - **Pitch (average)**:
-        - Below 200: Very Calm (Rating: 1-3)
-        - 200-800: Moderate Stress (Rating: 4-6)
-        - Above 800: High Stress (Rating: 7-10)
-    
+        - Below 200: Very Calm (Rating: 1-2)
+        - 200-600: Calm to Moderate (Rating: 3-5)
+        - 600-800: Moderate Stress (Rating: 6-7)
+        - Above 800: High Stress (Rating: 8-10)
+   
+    ### Important Note:
+    - While **Speech Rate** is a factor in determining stress, **Loudness** and **Pitch** have a stronger impact on the overall stress level.
+    - Please weigh the **Loudness** and **Pitch** more heavily when determining the final stress rating.
+
     Answer with a single number from 1 to 10 (no explanations), based on the combined indicators.
-    `;
+`;
         
     try {
         const result = await model.generateContent(prompt);
@@ -212,8 +220,6 @@ async function generateAnalysis(pressureMap) {
 }
 
 //analyzePressureAndScores();
-
-
 
 
 
