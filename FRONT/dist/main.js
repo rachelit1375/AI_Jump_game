@@ -111,7 +111,7 @@ else {
                     this.leftPressed = !1;
                     this.jump = !1;
                     this.gravity = 2;
-                    this.yVelocity = 10;
+                    this.yVelocity = 3;
                     this.image = new Image;
                     this.image.src = "src/images/p1_front.png";
                 }

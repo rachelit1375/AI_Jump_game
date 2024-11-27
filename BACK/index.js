@@ -52,29 +52,30 @@ async function sendToGeminiForStressLevel(loudness, speechRate, pitch) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const prompt = `
-    Given the following audio data, evaluate the stress level from 1 to 10, where 1 is least stressed and 10 is most stressed.
-
-    The user is playing a jumping game where they need to avoid falling off moving platforms. This game may induce emotional reactions but the player is expected to stay relatively calm.
-
+    Given the following audio data, evaluate the stress level on a scale from 1 to 10, where 1 is least stressed and 10 is most stressed.
+    
+    The user is engaged in an interactive game requiring focus and quick reactions. Emotional responses are expected but should be within reasonable limits.
+    
     ### Audio Data:
-       loudness: ${loudness}, speech Rate : ${speechRate}, pitch:${pitch} 
+       loudness: ${loudness}, speech rate: ${speechRate}, pitch: ${pitch}
+    
     ### Key Stress Indicators:
-    - **Loudness**: 
-        - Below 5: Calm 
-        - 5-8: Mild Stress 
-        - Above 8: Higher Stress or Panic 
-    - **Pitch**: 
-        - Below 50: Calm
-        - 50-80: Moderate Anxiety 
-        - Above 80: Panic or High Stress 
-    - **Speech Rate**: 
-        - Below 20: Calm
-        - 20-40: Moderate Anxiety 
-        - Above 40: Panic or High Stress
-
-    Answer with a single number from 1 to 10 (no explanations), where 1 is calm and 10 is highly stressed.
-`;
-
+    - **Loudness (average)**:
+        - Below 2000: Very Calm (Rating: 1-3)
+        - 2000-5000: Mild Stress (Rating: 4-6)
+        - Above 5000: High Stress or Panic (Rating: 7-10)
+    - **Speech Rate (average)**:
+        - Below 0.01: Very Calm (Rating: 1-3)
+        - 0.01-0.05: Moderate Stress (Rating: 4-6)
+        - Above 0.05: High Stress (Rating: 7-10)
+    - **Pitch (average)**:
+        - Below 200: Very Calm (Rating: 1-3)
+        - 200-800: Moderate Stress (Rating: 4-6)
+        - Above 800: High Stress (Rating: 7-10)
+    
+    Answer with a single number from 1 to 10 (no explanations), based on the combined indicators.
+    `;
+        
     try {
         const result = await model.generateContent(prompt);
         return result.response.text(); // מחזיר את התוצאה שנשקלת כטקסט

@@ -1,6 +1,6 @@
 let audioContext, analyser, microphone, dataArray;
 let volumeSum = 0, speechRateSum = 0, pitchSum = 0;
-let count = 0;  // מספר הפעמים שאנחנו עושים עדכון
+let count = 0; // מספר הפעמים שאנחנו עושים עדכון
 
 // פונקציה שמבצעת התחלת הקלטה
 export function startRecording() {
@@ -12,7 +12,9 @@ export function startRecording() {
             microphone = audioContext.createMediaStreamSource(stream);
             microphone.connect(analyser);
 
+            // הגדרות ל-AnalyserNode
             analyser.fftSize = 2048;
+            analyser.smoothingTimeConstant = 0.8; // להחלקת הרעש
             const bufferLength = analyser.frequencyBinCount;
             dataArray = new Uint8Array(bufferLength);
 
@@ -32,7 +34,7 @@ function updateAudioData() {
     analyser.getByteFrequencyData(dataArray);
 
     // חישוב עוצמת קול (Volume)
-    const volume = dataArray.reduce((sum, val) => sum + val, 0) / dataArray.length;
+    const volume = dataArray.reduce((sum, val) => sum + val, 0); // ללא ממוצע
 
     // חישוב מהירות דיבור
     const speechRate = calculateSpeechRate(dataArray);
@@ -55,28 +57,25 @@ function calculateSpeechRate(dataArray) {
     let rate = 0;
     // מניח שמהירות הדיבור תלויה במספר השינויים בתדרים
     for (let i = 1; i < dataArray.length; i++) {
-        if (Math.abs(dataArray[i] - dataArray[i - 1]) > 10) {
+        if (Math.abs(dataArray[i] - dataArray[i - 1]) > 15) { // רף שונה
             rate++;
         }
     }
-    return rate;
+    return rate / dataArray.length; // נרמול לפי האורך
 }
 
 // פונקציה שמבצעת חישוב הטון
 function calculatePitch(dataArray) {
-    let pitch = 0;
-    for (let i = 0; i < dataArray.length; i++) {
-        if (dataArray[i] > pitch) {
-            pitch = dataArray[i];
-        }
-    }
+    // זיהוי תדר הטון המשמעותי ביותר
+    const maxIndex = dataArray.indexOf(Math.max(...dataArray));
+    const pitch = (audioContext.sampleRate / analyser.fftSize) * maxIndex; // חישוב לפי אינדקס
     return pitch;
 }
 
 // פונקציה שמסיימת את ההקלטה ומדפיסה את הממוצעים
 export function stopRecording(score) {
     if (audioContext) {
-        audioContext.close();  // סגירת הקלטה
+        audioContext.close(); // סגירת הקלטה
         console.log("הקלטה הסתיימה.");
 
         // חישוב הממוצעים
@@ -89,6 +88,7 @@ export function stopRecording(score) {
         console.log("ממוצע מהירות דיבור: ", avgSpeechRate);
         console.log("ממוצע טון: ", avgPitch);
 
+        // שליחת הנתונים לשרת
         fetch("http://localhost:3000/storeScoreAndStress", {
             method: "POST",
             headers: {
@@ -102,10 +102,7 @@ export function stopRecording(score) {
             })
         })
             .catch(error => {
-                // טיפול בשגיאות בלבד
                 console.error("Error sending data to server:", error);
             });
-
-
     }
 }

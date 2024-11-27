@@ -10,7 +10,7 @@ export default class Character {
         this.leftPressed = false;
         this.jump = false;
         this.gravity = 9;
-        this.yVelocity = 10;
+        this.yVelocity = 3;
         this.image = new Image();
         this.image.src = "src/images/p1_front.png";
     }
