@@ -11,16 +11,20 @@
   <style>
     /* רקע הדף */
     body {
-      background-color: #002b36; /* ירוק כהה מאוד */
-      color: #eee; /* טקסט בהיר לקריאות */
+      background-color: #002b36;
+      /* ירוק כהה מאוד */
+      color: #eee;
+      /* טקסט בהיר לקריאות */
       font-family: 'Chelsea Market', sans-serif;
     }
 
     /* כפתור */
-    #toggleView,#backToGame {
+    #toggleView,
+    #backToGame {
       margin: 20px;
       padding: 10px 20px;
-      background-color: #268bd2; /* כחול בולט */
+      background-color: #566986;
+      /* כחול בולט */
       color: #fff;
       border: none;
       border-radius: 5px;
@@ -28,71 +32,145 @@
       font-size: 1rem;
     }
 
-    #toggleView:hover,#backToGame:hover {
-      background-color: #2aa198; /* ירוק בולט */
+    #toggleView:hover,
+    #backToGame:hover {
+      background-color: #2aa198;
+      /* ירוק בולט */
     }
 
     /* טבלה או דיאגרמה */
     canvas {
       margin: 20px auto;
       display: block;
-      background-color: #073642; /* רקע כהה מתאים */
-      border: 2px solid #268bd2; /* מסגרת כחולה בולטת */
+      background-color: #073642;
+      /* רקע כהה מתאים */
+      border: 2px solid #268bd2;
+      /* מסגרת כחולה בולטת */
       border-radius: 10px;
     }
-    #pressureChart {
-  width: 85% !important; /* זה יגרום לו למלא את רוחב האלמנט בו הוא נמצא */
-  height: 400px; /* גובה קבוע */
-}
 
+    .pressure-analysis-container {
+      margin-left: 20%;
+      margin-right: 20%;
+      padding: 20px;
+      /* ריפוד פנימי */
+      border: 5px solid #000;
+      /* מסגרת שחורה עם רוחב 5px */
+      border-radius: 10px;
+      /* פינות מעוגלות */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      /* הצללה עדינה */
+      font-family: 'Times New Roman', Times, serif;
+      /* פונט שמתאים לדף עיתון */
+      line-height: 1.6;
+      /* גובה שורה */
+    }
+
+    #pressureChart {
+      width: 75% !important;
+      /* זה יגרום לו למלא את רוחב האלמנט בו הוא נמצא */
+      height: 100px;
+      /* גובה קבוע */
+    }
+
+    #loader {
+      display: none;
+      border: 6px solid #f3f3f3;
+      /* רקע בהיר */
+      border-top: 6px solid #3498db;
+      /* צבע ראשי */
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+      /* למרכז */
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 
 <body>
-    <button id="toggleView">SHOW DIAGRAM</button>
-    <button id="backToGame" >BACK TO GAME</button> <!-- כפתור חזרה למשחק -->
-  <div class="pressure-analysis-container">
+  <button id="toggleView">SHOW DIAGRAM</button>
+  <button id="backToGame">BACK TO GAME</button> <!-- כפתור חזרה למשחק -->
+  <!-- <div id="stressLevelDisplay">Your Stress Level: </div> -->
+  <div id="loader" style="display: none;">Loading...</div> <!-- גלגל טעינה -->
+  <div class="pressure-analysis-container"></div>
+  <canvas id="pressureChart" style="display: none;"></canvas> <!-- הדיאגרמה -->
 
-  </div>
-  <canvas id="pressureChart" style="display:none;"></canvas> <!-- הדיאגרמה -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", async function () {
-      const toggleButton = document.getElementById('toggleView');
-      const backToGameButton = document.getElementById('backToGame');
-      const container = document.querySelector('.pressure-analysis-container');
-      const chartCanvas = document.getElementById('pressureChart');
+      const toggleButton = document.getElementById("toggleView");
+      const backToGameButton = document.getElementById("backToGame");
+      const container = document.querySelector(".pressure-analysis-container");
+      const chartCanvas = document.getElementById("pressureChart");
+      const loader = document.getElementById("loader");
       let isDiagramShown = false;
-      let chart = null; // משתנה שיאחסן את אובייקט הגרף
+      let chart = null;
+
+      // הצגת גלגל טעינה
+      function showLoader() {
+        loader.style.display = "block";
+        container.style.display = 'none';
+        chartCanvas.style.display = 'none';
+      }
+
+      // הסתרת גלגל טעינה
+      function hideLoader() {
+        loader.style.display = "none";
+      }
 
       // הצגת מאמר בעת טעינת הדף
       try {
-        const response = await fetch('http://localhost:3000/AnalyzePressureAndPerformance');
+        showLoader(); // הצגת גלגל טעינה
+        const response = await fetch(
+          "http://localhost:3000/AnalyzePressureAndPerformance"
+        );
         const data = await response.text();
-        container.style.display = 'block';
+        container.style.display = "block";
         container.innerHTML = data;
       } catch (error) {
-        console.error('Error fetching and displaying article:', error);
+        console.error("Error fetching and displaying article:", error);
+      } finally {
+        hideLoader(); // הסתרת גלגל טעינה
       }
 
-      toggleButton.addEventListener('click', async function () {
+      toggleButton.addEventListener("click", async function () {
         if (isDiagramShown) {
           // הצגת המאמר
           try {
-            const response = await fetch('http://localhost:3000/AnalyzePressureAndPerformance');
+            showLoader(); // הצגת גלגל טעינה
+            const response = await fetch(
+              "http://localhost:3000/AnalyzePressureAndPerformance"
+            );
             const data = await response.text();
-            container.style.display = 'block';
-            chartCanvas.style.display = 'none';
+            container.style.display = "block";
+            chartCanvas.style.display = "none";
             container.innerHTML = data;
-            toggleButton.textContent = 'SHOW DIAGRAM';
+            toggleButton.textContent = "SHOW DIAGRAM";
             isDiagramShown = false;
           } catch (error) {
-            console.error('Error fetching and displaying article:', error);
+            console.error("Error fetching and displaying article:", error);
+          } finally {
+            hideLoader(); // הסתרת גלגל טעינה
           }
         } else {
           // הצגת הדיאגרמה
           try {
-            const response = await fetch('http://localhost:3000/PressureScoresChart');
+            showLoader(); // הצגת גלגל טעינה
+            const response = await fetch(
+              "http://localhost:3000/PressureScoresChart"
+            );
             const data = await response.json();
 
             // אם יש דיאגרמה קיימת, נמחק אותה קודם
@@ -100,9 +178,9 @@
               chart.destroy();
             }
 
-            const ctx = chartCanvas.getContext('2d');
-            chartCanvas.style.display = 'block';
-            container.style.display = 'none';
+            const ctx = chartCanvas.getContext("2d");
+            chartCanvas.style.display = "block";
+            container.style.display = "none";
 
             // איפוס גודל ה-canvas לפני יצירת דיאגרמה חדשה
             chartCanvas.width = chartCanvas.offsetWidth;
@@ -110,36 +188,38 @@
 
             // יצירת דיאגרמה חדשה
             chart = new Chart(ctx, {
-              type: 'bar',
+              type: "bar",
               data: {
                 labels: data.labels,
-                datasets: [{
-                  label: 'Average Score',
-                  data: data.datasets[0].data,
-                  backgroundColor: [
-                    '#39ff14', // ירוק ניאון
-                    '#00ffff', // תכלת זוהר
-                    '#ffea00', // צהוב ניאון
-                    '#ff007f', // ורוד זוהר
-                    '#9400d3'  // סגול זוהר
-                  ],
-                  borderColor: '#ffffff', // מסגרת לבנה
-                  borderWidth: 1,
-                }],
+                datasets: [
+                  {
+                    label: "Average Score",
+                    data: data.datasets[0].data,
+                    backgroundColor: [
+                      "#39ff14", // ירוק ניאון
+                      "#00ffff", // תכלת זוהר
+                      "#ffea00", // צהוב ניאון
+                      "#ff007f", // ורוד זוהר
+                      "#9400d3", // סגול זוהר
+                    ],
+                    borderColor: "#ffffff", // מסגרת לבנה
+                    borderWidth: 1,
+                  },
+                ],
               },
               options: {
                 responsive: true,
                 plugins: {
                   legend: {
-                    position: 'top',
+                    position: "top",
                     labels: {
-                      color: '#eee', // טקסט אגדה בהיר
+                      color: "#eee", // טקסט אגדה בהיר
                     },
                   },
                   title: {
                     display: true,
-                    text: 'Average Scores by Pressure Levels',
-                    color: '#fff', // כותרת בהירה
+                    text: "Average Scores by Pressure Levels",
+                    color: "#fff", // כותרת בהירה
                     font: {
                       size: 18,
                     },
@@ -148,32 +228,35 @@
                 scales: {
                   x: {
                     ticks: {
-                      color: '#eee', // טקסט ציר X
+                      color: "#eee", // טקסט ציר X
                     },
                   },
                   y: {
                     ticks: {
-                      color: '#eee', // טקסט ציר Y
+                      color: "#eee", // טקסט ציר Y
                     },
                   },
                 },
               },
             });
 
-            toggleButton.textContent = 'SHOW NEWS ARTICLE';
+            toggleButton.textContent = "SHOW NEWS ARTICLE";
             isDiagramShown = true;
           } catch (error) {
-            console.error('Error fetching and displaying chart:', error);
+            console.error("Error fetching and displaying chart:", error);
+          } finally {
+            hideLoader(); // הסתרת גלגל טעינה
           }
         }
       });
 
       // הוספת פעולה לכפתור חזרה למשחק
-      backToGameButton.addEventListener('click', function () {
-        window.location.href = 'index.html'; // הפנייה ל-index.html
+      backToGameButton.addEventListener("click", function () {
+        window.location.href = "index.html"; // הפנייה ל-index.html
       });
     });
   </script>
 </body>
+
 
 </html>

@@ -1,6 +1,7 @@
 let audioContext, analyser, microphone, dataArray;
 let volumeSum = 0, speechRateSum = 0, pitchSum = 0;
 let count = 0; // מספר הפעמים שאנחנו עושים עדכון
+const MIN_THRESHOLD = 50; // אם הערך נמוך מזה, נניח שזו עוצמת שקט ולא מחשבים את זה כחלק מהמהירות
 
 // פונקציה שמבצעת התחלת הקלטה
 export function startRecording() {
@@ -54,14 +55,18 @@ function updateAudioData() {
 
 // פונקציה שמבצעת חישוב מהירות דיבור על פי שינויי התדרים
 function calculateSpeechRate(dataArray) {
-    let rate = 0;
-    // מניח שמהירות הדיבור תלויה במספר השינויים בתדרים
+    let totalTime = 0; // זמן כולל (כולל שקט)
+    let speechTime = 0; // זמן שבו הייתה פעילות דיבור
+
+    // עבור כל הערכים ב-dataArray
     for (let i = 1; i < dataArray.length; i++) {
-        if (Math.abs(dataArray[i] - dataArray[i - 1]) > 15) { // רף שונה
-            rate++;
+        if (dataArray[i] > MIN_THRESHOLD) { // אם יש עוצמת קול משמעותית
+            speechTime++; // הוספה לזמן הדיבור
         }
+        totalTime++; // הוספה לכל הזמן
     }
-    return rate / dataArray.length; // נרמול לפי האורך
+
+    return speechTime / totalTime; // יחס בין הזמן שבו הייתה פעילות לבין זמן השקט
 }
 
 // פונקציה שמבצעת חישוב הטון
