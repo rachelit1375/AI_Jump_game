@@ -69,6 +69,10 @@ function calculateSpeechRate(dataArray) {
     return speechTime / totalTime; // יחס בין הזמן שבו הייתה פעילות לבין זמן השקט
 }
 
+// חישוב עוצמת הקול
+
+
+
 // פונקציה שמבצעת חישוב הטון
 function calculatePitch(dataArray) {
     // זיהוי תדר הטון המשמעותי ביותר
